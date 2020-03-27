@@ -9,9 +9,6 @@
     "module": "commonjs",
     "target": "es6"
   },
-  "files": [
-    "dts/index.d.ts"
-  ],
   "types": [
     "node",
     "ts-node"

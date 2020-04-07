@@ -16,7 +16,7 @@ class Flv extends demux_1.default {
             showPrintf: p.showPrintf === undefined ? true : p.showPrintf,
         };
         if (this.props.showPrintf) {
-            console.log(`    type   filePostion        size          dts           pts      keyframe  duration`);
+            console.log(`    type   filePostion        size          dts           pts      keyframe  duration   unitType`);
         }
     }
     static checkVersion(chunk) {
@@ -278,11 +278,12 @@ class Flv extends demux_1.default {
         if (this.avcPackets.length > 1) {
             const len = this.avcPackets.length;
             const index = len - 2;
-            const { size, dts, cts, filePostion, frameType } = this.avcPackets[index];
+            const { size, dts, cts, filePostion, frameType, nalus } = this.avcPackets[index];
+            const unitType = nalus.map((i) => i.unitType).join('|');
             const pts = dts + cts;
             const keyframe = frameType === 1;
             const duration = this.avcPackets[index + 1].dts - dts;
-            this.printf('video', filePostion, size, dts, pts, keyframe, duration);
+            this.printf('video', filePostion, size, dts, pts, keyframe, duration, unitType);
         }
         return offset;
     }
@@ -400,7 +401,7 @@ class Flv extends demux_1.default {
             const index = len - 2;
             const { pts, dts, filePostion, length } = this.audioTags[index];
             const duration = this.audioTags[len - 1].dts - dts;
-            this.printf('audio', filePostion, length, dts, pts, '-', duration);
+            this.printf('audio', filePostion, length, dts, pts, '-', duration, '-');
         }
     }
     read_mp3_packet(chunk, offset) { }
@@ -429,6 +430,9 @@ class Flv extends demux_1.default {
         const forbidden_zero_bit = d >>> 7 & 1;
         const nal_ref_idc = d >>> 6 & 1;
         const nal_unit_type = d & 0b11111;
+        if (forbidden_zero_bit !== 0) {
+            debug('warn: NALU header forbidden_zero_bit error');
+        }
         return {
             forbidden_zero_bit,
             refIdc: nal_ref_idc,
@@ -450,7 +454,8 @@ class Flv extends demux_1.default {
             const pts = arg[4].toString().padStart(8);
             const keyframe = arg[5].toString().padStart(5);
             const duration = arg[6].toString().padStart(3);
-            console.log(`   ${type}   ${filePostion}      ${size}     ${dts}      ${pts}      ${keyframe}      ${duration}`);
+            const unitType = arg[7].toString().padStart(8);
+            console.log(`   ${type}   ${filePostion}      ${size}     ${dts}      ${pts}      ${keyframe}      ${duration}     ${unitType}`);
             this.state.showLen++;
         }
     }

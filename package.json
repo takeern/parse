@@ -15,6 +15,9 @@
       }
     }
   },
+  "bin": {
+    "parse": "./bin/index.js"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -22,6 +25,7 @@
     "better-npm-run": "^0.1.1",
     "body-parse": "^0.1.0",
     "debug": "^4.1.1",
+    "shelljs": "^0.8.3",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3",
     "yargs": "^15.3.1"

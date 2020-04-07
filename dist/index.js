@@ -35,7 +35,6 @@ class Parse {
             console.table(Parse.codeHelp);
             return;
         }
-        path = '/Users/takeern/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application\ Support/WXWork/Data/1688850815341128/Cache/File/2020-03/out.flv';
         if (!path) {
             throw new Error('input path is required');
         }
@@ -109,16 +108,66 @@ class Parse {
                 switch (path) {
                     case '/getParseData':
                         return this.state.demuxer.getParseData();
+                    case '/getBuffer':
+                        const range = req.header('Range');
+                        if (range) {
+                            const match = range.match(/bytes=([0-9]+)-([0-9]+)/);
+                            if (match && match.length === 3) {
+                                const start = parseInt(match[1], 10);
+                                const end = parseInt(match[2], 10);
+                                if (!isNaN(start) && !isNaN(end)) {
+                                    return fs_1.createReadStream(this.state.path, {
+                                        start,
+                                        end,
+                                    });
+                                }
+                            }
+                        }
+                        return 'Range 不合法';
                     default:
                         return null;
                 }
             },
             onCreateSuccess: () => {
-                util_1.default.openBrowser(`127.0.0.1:${Parse.serve.port}/getParseData`);
+                util_1.default.openBrowser(`127.0.0.1:${Parse.serve.port}/parse`);
             },
         });
     }
 }
 exports.default = Parse;
-const p = new Parse();
+Parse.codeHelp = [
+    {
+        code: '--path -p',
+        desc: 'input parse video local path',
+        example: '--path=../test.flv , -p ../test.flv'
+    },
+    {
+        code: '--showVideo -v',
+        desc: 'input parse video local path',
+        example: '--showVideo=false , -v false'
+    },
+    {
+        code: '--showAudio -a',
+        desc: 'input parse Audio local path',
+        example: '--showAudio=false , -a false'
+    },
+    {
+        code: '--length -l',
+        desc: 'show flv tag max length',
+        example: '--length=100 , -v 100'
+    },
+    {
+        code: '--help -h',
+        desc: 'help example',
+        example: ''
+    },
+    {
+        code: '--showWeb -w',
+        desc: 'show parse data in web',
+        example: '--showWeb=true, -w=true'
+    },
+];
+Parse.serve = {
+    port: 3000,
+};
 //# sourceMappingURL=index.js.map

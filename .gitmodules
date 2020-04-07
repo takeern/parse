@@ -1,0 +1,3 @@
+[submodule "parse-web"]
+	path = parse-web
+	url = https://github.com/takeern/parse-web.git

@@ -1,6 +1,7 @@
 import express = require('express');
 const bodyParser = require('body-parser')
 import { Request, Response } from 'express';
+const path = require('path');
 
 interface IOption {
     onRequestData?: Function;
@@ -26,8 +27,11 @@ export default class Serve {
     private createServe() {
         try {
             const app: express.Application = express();
+            app.use(express.static(__dirname + '/../../parse-web'));
             app.use((req, res, next) => {
+
                 res.header('Access-Control-Allow-Origin', '*');
+                res.header('Access-Control-Allow-Headers', 'Range');
                 next();
             });
             app.use(bodyParser());
@@ -38,6 +42,19 @@ export default class Serve {
             app.get('/getParseData', (req, res) => {
                 const data = this.handleRequest('/getParseData', req);
                 res.json(data);
+            });
+            app.get('/getBuffer', (req, res) => {
+                const data = this.handleRequest('/getBuffer', req);
+                if (data.data && data.data.pipe) {
+
+                    res.type('application/octet-stream');
+                    data.data.pipe(res);
+                } else {
+                    res.send(data);
+                }
+            });
+            app.get('/parse', (req, res) => {
+                res.sendFile(path.resolve(__dirname + '/../../parse-web/dist/index.html'));
             });
             app.listen(this.port, () => {
                 if (this.onCreateSuccess) {

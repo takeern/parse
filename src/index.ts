@@ -93,7 +93,6 @@ export default class Parse {
             return;
         }
 
-        path = '../sei_test1.flv';
         if (!path) {
             throw new Error('input path is required');
         }
@@ -170,7 +169,6 @@ export default class Parse {
     }
 
     private createOutputServe() {
-        console.log(Parse.serve);
         const s = new Serve({
             port: Parse.serve.port,
             onCreateError: (e: Error) => { 
@@ -180,15 +178,30 @@ export default class Parse {
                 switch (path) {
                     case '/getParseData':
                         return this.state.demuxer.getParseData();
+                    case '/getBuffer':
+                        const range = req.header('Range');
+                        if (range) {
+                            const match = range.match(/bytes=([0-9]+)-([0-9]+)/);
+                            if (match && match.length  === 3) {
+                                const start = parseInt(match[1], 10);
+                                const end = parseInt(match[2], 10);
+                                if (!isNaN(start) && !isNaN(end)) {
+                                    return createReadStream(this.state.path, {
+                                        start,
+                                        end,
+                                    });
+                                }
+                            }
+                        }
+                        
+                        return 'Range 不合法';
                     default:
                         return null;
                 }
             },
             onCreateSuccess: () => {
-                Util.openBrowser(`127.0.0.1:${Parse.serve.port}/getParseData`);
+                Util.openBrowser(`127.0.0.1:${Parse.serve.port}/parse`);
             },
         })
     }
 }
-
-const p = new Parse();

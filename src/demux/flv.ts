@@ -618,6 +618,9 @@ export default class Flv extends Demux {
         const forbidden_zero_bit = d >>> 7 & 1;
         const nal_ref_idc = d >>> 6 & 1;
         const nal_unit_type = d & 0b11111;
+        if (forbidden_zero_bit !== 0) {
+            debug('warn: NALU header forbidden_zero_bit error');
+        }
         return {
             forbidden_zero_bit,
             refIdc: nal_ref_idc,

@@ -16,7 +16,7 @@ class Flv extends demux_1.default {
             showPrintf: p.showPrintf === undefined ? true : p.showPrintf,
         };
         if (this.props.showPrintf) {
-            console.log(`    type   filePostion        size          dts           pts      keyframe  duration   unitType`);
+            console.log(`    type   filePostion        size          dts           pts      keyframe   duration   unitType`);
         }
     }
     static checkVersion(chunk) {
@@ -400,7 +400,8 @@ class Flv extends demux_1.default {
             const len = this.audioTags.length;
             const index = len - 2;
             const { pts, dts, filePostion, length } = this.audioTags[index];
-            const duration = this.audioTags[len - 1].dts - dts;
+            const sampleDuration = (1024 * 1000 / this.audioAcc.samplingFrequency).toFixed(2);
+            const duration = `${this.audioTags[len - 1].dts - dts}|${sampleDuration}`;
             this.printf('audio', filePostion, length, dts, pts, '-', duration, '-');
         }
     }

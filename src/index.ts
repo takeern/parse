@@ -3,14 +3,14 @@ import Demux from './demux/demux';
 import { ReadStream, createReadStream } from 'fs';
 import Util from './util/util';
 import Serve from './util/serve';
-const argv = require('yargs')
-    .alias('h', 'help')
-    .alias('p', 'path')
-    .alias('v', 'showVideo')
-    .alias('a', 'showAudio')
-    .alias('l', 'length')
-    .alias('w', 'showWeb')
-    .argv;
+// const argv = require('yargs')
+//     .alias('h', 'help')
+//     .alias('p', 'path')
+//     .alias('v', 'showVideo')
+//     .alias('a', 'showAudio')
+//     .alias('l', 'length')
+//     .alias('w', 'showWeb')
+//     .argv;
 const debug = require('debug')('parse: index');
 
 interface IState {
@@ -23,60 +23,31 @@ interface IState {
     showWeb: boolean;
 }
 
+interface IOption {
+    path?: string,
+    showVideo?: string,
+    showAudio?: string,
+    length?: number,
+    showWeb?: boolean,
+}
+
 export default class Parse {
     private state: IState;
-    static codeHelp = [
-        {
-            code: '--path -p',
-            desc: 'input parse video local path',
-            example: '--path=../test.flv , -p ../test.flv'
-        },
-        {
-            code: '--showVideo -v',
-            desc: 'input parse video local path',
-            example: '--showVideo=false , -v false'
-        },
-        {
-            code: '--showAudio -a',
-            desc: 'input parse Audio local path',
-            example: '--showAudio=false , -a false'
-        },
-        {
-            code: '--length -l',
-            desc: 'show flv tag max length',
-            example: '--length=100 , -v 100'
-        },
-        {
-            code: '--help -h',
-            desc: 'help example',
-            example: ''
-        },
-        {
-            code: '--showWeb -w',
-            desc: 'show parse data in web',
-            example: '--showWeb=true, -w=true'
-        },
-    ];
     static serve = {
         port: 3000,
     };
-    constructor() {
-        this.getArgs();
+    constructor(option: IOption) {
+        // this.getArgs();
+        this.init(option);
     }
 
-    private init(option: {
-        path: string,
-        showAudio: boolean,
-        showVideo: boolean,
-        length: number,
-        showWeb: boolean,
-    }) {
+    private init(option: IOption) {
         this.state = {
             firstRecieve: true,
             demuxer: null,
             path: option.path,
-            showVideo: option.showVideo,
-            showAudio: option.showAudio,
+            showAudio: Util.checkArgs(option.showAudio, 'showAudio'),
+            showVideo: Util.checkArgs(option.showVideo, 'showVideo'),
             showMaxLen: option.length,
             showWeb: option.showWeb,
         };
@@ -87,23 +58,19 @@ export default class Parse {
      * 获取命令行参数
      */
     private getArgs() {
-        let { path, showAudio, showVideo, length, help, showWeb } = argv;
-        if (help) {
-            console.table(Parse.codeHelp);
-            return;
-        }
+        let { path, showAudio, showVideo, length, showWeb } = argv;
 
         if (!path) {
             throw new Error('input path is required');
         }
         
-        this.init({
-            path,
-            showAudio: Util.checkArgs(showAudio, 'showAudio'),
-            showVideo: Util.checkArgs(showVideo, 'showVideo'),
-            length,
-            showWeb,
-        });
+        // this.init({
+        //     path,
+        //     showAudio: Util.checkArgs(showAudio, 'showAudio'),
+        //     showVideo: Util.checkArgs(showVideo, 'showVideo'),
+        //     length,
+        //     showWeb,
+        // });
     }
 
     private createStream() {

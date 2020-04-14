@@ -16,6 +16,15 @@ cd parse && npm i && npm link
 // 展示 10 条 frame 数据
 parse -p inputpath.flv -l 10 
 
+// 在网页中显示
+parse -p inputpath.flv  -w
+
 // 更多
 parse -h
 ```
+
+### 效果
+
+![命令行](https://github.com/takeern/parse/blob/master/img/bin.png)
+
+![网页](https://github.com/takeern/parse/blob/master/img/web.png)

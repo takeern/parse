@@ -25,6 +25,6 @@ parse -h
 
 ### 效果
 
-![命令行](https://github.com/takeern/parse/blob/master/img/bin.png)
+![命令行](https://github.com/takeern/parse/blob/master/doc/bin.png)
 
-![网页](https://github.com/takeern/parse/blob/master/img/web.png)
+![网页](https://github.com/takeern/parse/blob/master/doc/web.png)

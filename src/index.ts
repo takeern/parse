@@ -3,14 +3,6 @@ import Demux from './demux/demux';
 import { ReadStream, createReadStream } from 'fs';
 import Util from './util/util';
 import Serve from './util/serve';
-// const argv = require('yargs')
-//     .alias('h', 'help')
-//     .alias('p', 'path')
-//     .alias('v', 'showVideo')
-//     .alias('a', 'showAudio')
-//     .alias('l', 'length')
-//     .alias('w', 'showWeb')
-//     .argv;
 const debug = require('debug')('parse: index');
 
 interface IState {
